@@ -10,7 +10,7 @@
       <div class="d-flex flex-column pa-5">
         <v-card-title
           v-if="!isPrinciple"
-          :class="`title text-h3 font-weight-black text-right`"
+          :class="`title text-lg-h4 text-xl-h3 font-weight-black text-right`"
           :contenteditable="isEditing"
           @input="onTitleInput"
           data-test-id="card-title"
@@ -113,7 +113,18 @@ export default {
 }
 
 .number {
-  font-size: 13rem;
   opacity: 0.1;
+}
+
+@media only screen and (min-width: 1265px){
+  .number {
+    font-size: 10rem;
+  }
+}
+
+@media only screen and (min-width: 1905px){
+  .section-title {
+    font-size: 13rem;
+  }
 }
 </style>

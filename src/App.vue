@@ -105,9 +105,21 @@ export default {
 }
 
 .section-title {
-  font-size: 12rem;
   writing-mode: vertical-lr;
   line-height: 1em;
+}
+
+
+@media only screen and (min-width: 1265px){
+  .section-title {
+    font-size: 9rem;
+  }
+}
+
+@media only screen and (min-width: 1905px){
+  .section-title {
+    font-size: 12rem;
+  }
 }
 
 #values-title {
