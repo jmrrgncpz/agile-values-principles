@@ -8,16 +8,35 @@
               <h1 id="values-title" class="section-title ma-0">Values</h1>
             </v-col>
             <v-col class="d-flex flex-column cards-container">
-              <Card
-                v-for="i in 4"
-                v-bind:key="`value-${i}`"
-                title="Some Value Title"
-                :number="i"
+              <v-btn
+                :disabled="isCreatingValue"
+                v-if="values.length < 4"
+                data-test-id="btn-values-create"
+                @click="createNewValue"
+                text
+                class="theme--dark"
+                >Create new Value</v-btn
               >
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat
-                suscipit laborum eaque vero. Vel pariatur, aspernatur vitae
-                facere doloribus necessitatibus aperiam cumque esse! Nam
-                assumenda distinctio labore ab nisi maxime!
+              <Card
+                v-for="(value, i) in values"
+                :id="value.id"
+                :key="value.id"
+                :number="i + 1"
+                :title="value.title"
+                theme="dark"
+                ref="value-card"
+              >
+                {{ value.description }}
+              </Card>
+
+              <Card
+                v-if="isCreatingValue"
+                theme="dark"
+                :number="values.length + 1"
+                :isNew="true"
+                v-on:new-card-saved="handleNewCardSave"
+                data-test-id="new-value-container"
+              >
               </Card>
             </v-col>
           </v-row>
@@ -32,15 +51,14 @@
             </v-col>
             <v-col class="d-flex flex-column cards-container">
               <Card
-                v-for="i in 12"
-                v-bind:key="`value-${i}`"
-                title="Some Principle Title"
-                :number="i"
+                v-for="(principle, i) in principles"
+                :key="principle.id"
+                :number="i + 1"
+                :title="principle.title"
+                :is-principle="true"
+                theme="light"
               >
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat
-                suscipit laborum eaque vero. Vel pariatur, aspernatur vitae
-                facere doloribus necessitatibus aperiam cumque esse! Nam
-                assumenda distinctio labore ab nisi maxime!
+                {{ principle.description }}
               </Card>
             </v-col>
           </v-row>
@@ -52,15 +70,32 @@
 
 <script>
 import Card from "./components/Card.vue";
+import { db } from "./db";
 
 export default {
   name: "App",
+  data: () => ({
+    values: [],
+    principles: [],
+    isCreatingValue: false,
+  }),
   components: {
     Card,
   },
-  data: () => ({
-    //
-  })
+  methods: {
+    createNewValue() {
+      this.isCreatingValue = true;
+    },
+    handleNewCardSave() {
+      if (this.isCreatingValue) {
+        this.isCreatingValue = false;
+      }
+    }
+  },
+  firestore: {
+    values: db.collection("values"),
+    principles: db.collection("principles"),
+  },
 };
 </script>
 
@@ -90,5 +125,9 @@ export default {
 .cards-container {
   max-height: 100vh;
   overflow: auto;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
 </style>
