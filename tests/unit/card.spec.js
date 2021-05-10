@@ -2,7 +2,6 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import Card from '@/components/Card.vue'
 import Vuetify from 'vuetify';
 
-
 describe('Card.vue', () => {
   const localVue = createLocalVue();
   let vuetify;
@@ -32,22 +31,31 @@ describe('Card.vue', () => {
     expect(numberEl.text()).toBe('4');
   })
 
-  it('set the title/content value back to original when edit is canceled', async () => {
-    await wrapper.setProps({
-      title: 'This is the original title'
-    });
+  describe('the title/content value', () => {
+    let title;
+    beforeEach(async () => {
+      await wrapper.setData({
+        isEditing: true,
+        originalTitle: 'This is the original title'
+      })
 
-    await wrapper.setData({
-      isEditing: true
+      title = await wrapper.findComponent({ ref: 'card-title' });
+
+      wrapper.vm.onTitleInput({
+        target: {
+          innerText: 'The New Value 1'
+        }
+      });
     })
-    const title = await wrapper.findComponent({ ref: 'card-title' });
-    wrapper.vm.onTitleInput({
-      target: {
-        innerText: 'New Value'
-      }
-    });
-    
-    await wrapper.findComponent({ ref: 'btn-cancel' }).trigger('click');
-    expect(title.text()).toBe('This is the original title')
+
+    it('set value back to original when edit is canceled', async () => {
+      await wrapper.findComponent({ ref: 'btn-cancel' }).trigger('click');
+      expect(title.text()).toBe('This is the original title')
+    })
+
+    it('set value to the new value when save is clicked', async () => {
+      await wrapper.findComponent({ ref: 'btn-save-card' }).trigger('click');
+      expect(title.text()).toBe('The New Value 1');
+    })
   })
 })

@@ -6,7 +6,17 @@ export const db = firebase
   .initializeApp({ projectId: 'agile-values-principle' })
   .firestore()
 
-// Export types that exists in Firestore
-// This is not always necessary, but it's used in other examples
-// const { Timestamp, GeoPoint } = firebase.firestore
-// export { Timestamp, GeoPoint }
+export const _create = (collectionId, document) => {
+  db.collection(collectionId).add({
+    title: document.title,
+    description: document.description
+  })
+}
+
+export const _update = (collectionId, documentId, document) => {
+  db.collection(collectionId).doc(documentId).update(document);
+}
+
+export const _delete = (collectionId, documentId) => {
+  db.collection(collectionId).doc(documentId).delete();
+}

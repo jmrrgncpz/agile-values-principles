@@ -30,8 +30,8 @@
           <v-btn @click="isEditing = true">Edit</v-btn>
         </div>
         <div v-else>
-          <v-btn ref="btn-cancel" text>Cancel</v-btn>
-          <v-btn @click="saveCard" data-test-id="btn-save-card">Save</v-btn>
+          <v-btn @click="cancelEdit" ref="btn-cancel" text>Cancel</v-btn>
+          <v-btn @click="saveCard" data-test-id="btn-save-card" ref="btn-save-card">Save</v-btn>
         </div>
         </v-card-actions>
       </div>
@@ -40,9 +40,7 @@
 </template>
 
 <script>
-import { db } from '@/db.js';
-const values = db.collection('values');
-const principles = db.collection('principles');
+import { db, _create, _update, _delete } from '@/db.js';
 
 export default {
   props: ["id", "number", "title", "theme", "isPrinciple", 'isNew'],
@@ -50,11 +48,16 @@ export default {
     if (this.isNew) {
       this.isEditing = true;
     }
+
+    this.originalTitle = this.title;
+    this.originalDescription = this.description;
   },
   data() {
     return {
       isEditing: false,
       isSaving: false,
+      originalTitle: '',
+      originalDescription: ''
     }
   },
   methods: {
@@ -62,21 +65,25 @@ export default {
       this.isSaving = true;
 
       let eventName = this.isNew ? 'new-card-saved' : 'card-saved';
-      const targetCollection = this.isPrinciple ? principles : values;
+      const targetCollection = this.isPrinciple ? 'principles' : 'values';
       const document = {
         title: this.title || '',
         description: this.description || ''
       };
 
       if (this.isNew) {
-        await targetCollection.add(document);
+        await _create(targetCollection, document);
       } else {
-        await targetCollection.doc(this.id).update(document);
+        await _update(targetCollection, document);
       }
 
       this.isSaving = false;
       this.isEditing = false;
       this.$emit(eventName)
+    },
+    cancelEdit() {
+      this.title = this.originalTitle;
+      this.description = this.originalDescription;
     },
     onTitleInput(e) {
       this.title = e.target.innerText;
