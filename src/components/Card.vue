@@ -2,7 +2,11 @@
   <div class="card-component">
     <v-card
       class="card mb-6 d-flex align-center pa-4 justify-space-between"
-      :class="[`theme--${theme}`, `${ isPrinciple ? 'flex-row-reverse': 'flex-row' }`, '']"
+      :class="[
+        `theme--${theme}`,
+        `${isPrinciple ? 'flex-row-reverse' : 'flex-row'}`,
+        '',
+      ]"
       :loading="isSaving"
       elevation="0"
     >
@@ -18,21 +22,39 @@
         >
           {{ titleValue }}
         </v-card-title>
-        <v-card-text v-if="isPrinciple" class="content" :contenteditable="isEditing">
+        <v-card-text
+          v-if="isPrinciple"
+          class="content"
+          @input="onDescriptionInput"
+          :contenteditable="isEditing"
+        >
           <slot></slot>
         </v-card-text>
         <v-card-actions
           class="d-flex"
           :class="`${isPrinciple ? '' : 'justify-end'}`"
         >
-        <div v-if="!isEditing">
-          <v-btn text v-bind:class="`theme--${theme}`" class="mr-4" data-test-id="btn-delete-card">Delete</v-btn>
-          <v-btn @click="isEditing = true">Edit</v-btn>
-        </div>
-        <div v-else>
-          <v-btn @click="cancelEdit" ref="btn-cancel" text>Cancel</v-btn>
-          <v-btn @click="saveCard" data-test-id="btn-save-card" ref="btn-save-card">Save</v-btn>
-        </div>
+          <div v-if="!isEditing">
+            <v-btn
+              text
+              v-bind:class="`theme--${theme}`"
+              class="mr-4"
+              data-test-id="btn-delete-card"
+              ref="btn-delete-card"
+              @click="deleteCard"
+              >Delete</v-btn
+            >
+            <v-btn @click="isEditing = true">Edit</v-btn>
+          </div>
+          <div v-else>
+            <v-btn @click="cancelEdit" class="mr-4" v-bind:class="`theme--${theme}`" ref="btn-cancel" text>Cancel</v-btn>
+            <v-btn
+              @click="saveCard"
+              data-test-id="btn-save-card"
+              ref="btn-save-card"
+              >Save</v-btn
+            >
+          </div>
         </v-card-actions>
       </div>
     </v-card>
@@ -40,10 +62,8 @@
 </template>
 
 <script>
-import { db, _create, _update, _delete } from '@/db.js';
-
 export default {
-  props: ["id", "number", "title", "theme", "isPrinciple", 'isNew'],
+  props: ["id", "number", "title", "theme", "isPrinciple", "isNew"],
   mounted() {
     if (this.isNew) {
       this.isEditing = true;
@@ -56,52 +76,61 @@ export default {
     return {
       isEditing: false,
       isSaving: false,
-      originalTitle: '',
-      originalDescription: ''
-    }
+      originalTitle: "",
+      originalDescription: "",
+    };
   },
   methods: {
-    async saveCard() {
+    saveCard() {
       this.isSaving = true;
 
-      let eventName = this.isNew ? 'new-card-saved' : 'card-saved';
-      const targetCollection = this.isPrinciple ? 'principles' : 'values';
+      let eventName = this.isNew ? "new-card-saved" : "card-saved";
+      const collectionId = this.isPrinciple ? "principles" : "values";
       const document = {
-        title: this.title || '',
-        description: this.description || ''
+        title: this.title || "",
+        description: this.description || "",
       };
 
       if (this.isNew) {
-        await _create(targetCollection, document);
+        this.$store.dispatch("create", { collectionId, document });
       } else {
-        await _update(targetCollection, document);
+        document.id = this.id;
+        this.$store.dispatch("update", { collectionId, document });
       }
 
       this.isSaving = false;
       this.isEditing = false;
-      this.$emit(eventName)
+      this.$emit(eventName);
+    },
+    deleteCard() {
+      const collectionId = this.isPrinciple ? 'principles' : 'values';
+      this.$store.dispatch('delete', { collectionId, documentId: this.id })
     },
     cancelEdit() {
       this.title = this.originalTitle;
       this.description = this.originalDescription;
+      this.isEditing = false;
     },
     onTitleInput(e) {
       this.title = e.target.innerText;
-    }
+    },
+    onDescriptionInput(e) {
+      this.description = e.target.innerText;
+    },
   },
   computed: {
     titleValue() {
-      if (this.isPrinciple){
-        return '';
+      if (this.isPrinciple) {
+        return "";
       }
 
-      if (!this.title){
-        return 'Input your title here'
+      if (!this.title) {
+        return "Input your title here";
       }
 
       return this.title;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -123,13 +152,13 @@ export default {
   opacity: 0.1;
 }
 
-@media only screen and (min-width: 1265px){
+@media only screen and (min-width: 1265px) {
   .number {
     font-size: 10rem;
   }
 }
 
-@media only screen and (min-width: 1905px){
+@media only screen and (min-width: 1905px) {
   .section-title {
     font-size: 13rem;
   }

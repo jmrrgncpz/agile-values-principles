@@ -50,8 +50,18 @@
               </h1>
             </v-col>
             <v-col class="d-flex flex-column cards-container">
+              <v-btn
+                :disabled="isCreatingPrinciple"
+                v-if="principles.length < 12"
+                data-test-id="btn-values-create"
+                @click="createNewPrinciple"
+                text
+                class="theme--light"
+                >Create new Principle</v-btn
+              >
               <Card
                 v-for="(principle, i) in principles"
+                :id="principle.id"
                 :key="principle.id"
                 :number="i + 1"
                 :title="principle.title"
@@ -59,6 +69,18 @@
                 theme="light"
               >
                 {{ principle.description }}
+              </Card>
+
+              <Card
+                v-if="isCreatingPrinciple"
+                theme="light"
+                :number="principles.length + 1"
+                :isNew="true"
+                :is-principle="true"
+                v-on:new-card-saved="handleNewCardSave"
+                data-test-id="new-value-container"
+              >
+                {{ 'Input Principle description'}}
               </Card>
             </v-col>
           </v-row>
@@ -70,14 +92,16 @@
 
 <script>
 import Card from "./components/Card.vue";
-import { db } from "./db";
 
 export default {
   name: "App",
+  mounted() {
+    this.$store.dispatch('bindValues');
+    this.$store.dispatch('bindPrinciples');
+  },
   data: () => ({
-    values: [],
-    principles: [],
     isCreatingValue: false,
+    isCreatingPrinciple: false
   }),
   components: {
     Card,
@@ -86,16 +110,27 @@ export default {
     createNewValue() {
       this.isCreatingValue = true;
     },
+    createNewPrinciple() {
+      this.isCreatingPrinciple = true;
+    },
     handleNewCardSave() {
       if (this.isCreatingValue) {
         this.isCreatingValue = false;
       }
+
+      if (this.isCreatingPrinciple) {
+        this.isCreatingPrinciple = false;
+      }
     }
   },
-  firestore: {
-    values: db.collection("values"),
-    principles: db.collection("principles"),
-  },
+  computed: {
+    values() {
+      return this.$store.state.values;
+    },
+    principles() {
+      return this.$store.state.principles;
+    }
+  }
 };
 </script>
 
