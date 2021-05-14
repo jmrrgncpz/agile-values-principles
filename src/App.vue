@@ -177,4 +177,8 @@ export default {
 ::-webkit-scrollbar {
   display: none;
 }
+
+.fill-height {
+  height: 100%;
+}
 </style>
