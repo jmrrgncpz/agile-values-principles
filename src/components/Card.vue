@@ -14,9 +14,10 @@
       <div class="d-flex flex-column pa-5">
         <v-card-title
           v-if="!isPrinciple"
-          :class="`title text-lg-h4 text-xl-h3 font-weight-black text-right`"
+          class="title text-lg-h4 text-xl-h3 font-weight-black text-right"
           :contenteditable="isEditing"
-          @input="onTitleInput"
+          @focus="onFocus"
+          @blur="onTitleInput"
           data-test-id="card-title"
           ref="card-title"
         >
@@ -47,7 +48,14 @@
             <v-btn @click="isEditing = true">Edit</v-btn>
           </div>
           <div v-else>
-            <v-btn @click="cancelEdit" class="mr-4" v-bind:class="`theme--${theme}`" ref="btn-cancel" text>Cancel</v-btn>
+            <v-btn
+              @click="cancelEdit"
+              class="mr-4"
+              v-bind:class="`theme--${theme}`"
+              ref="btn-cancel"
+              text
+              >Cancel</v-btn
+            >
             <v-btn
               @click="saveCard"
               data-test-id="btn-save-card"
@@ -70,7 +78,9 @@ export default {
     }
 
     this.originalTitle = this.title;
+    this.titleEditable = this.title;
     this.originalDescription = this.description;
+    this.descriptionEditable = this.description;
   },
   data() {
     return {
@@ -78,6 +88,8 @@ export default {
       isSaving: false,
       originalTitle: "",
       originalDescription: "",
+      titleEditable: "",
+      descriptionEditable: "",
     };
   },
   methods: {
@@ -87,8 +99,8 @@ export default {
       let eventName = this.isNew ? "new-card-saved" : "card-saved";
       const collectionId = this.isPrinciple ? "principles" : "values";
       const document = {
-        title: this.title || "",
-        description: this.description || "",
+        title: this.titleEditable || "",
+        description: this.descriptionEditable || "",
       };
 
       if (this.isNew) {
@@ -103,20 +115,30 @@ export default {
       this.$emit(eventName);
     },
     deleteCard() {
-      const collectionId = this.isPrinciple ? 'principles' : 'values';
-      this.$store.dispatch('delete', { collectionId, documentId: this.id })
+      const collectionId = this.isPrinciple ? "principles" : "values";
+      this.$store.dispatch("delete", { collectionId, documentId: this.id });
     },
     cancelEdit() {
-      this.title = this.originalTitle;
-      this.description = this.originalDescription;
-      this.isEditing = false;
+      if (this.isNew) {
+        this.$emit('new-card-canceled');
+      } else {
+        this.titleEditable = this.originalTitle;
+        this.descriptionEditable = this.originalDescription;
+        this.isEditing = false;  
+      }
     },
     onTitleInput(e) {
-      this.title = e.target.innerText;
+      this.titleEditable = e.target.innerText;
     },
     onDescriptionInput(e) {
-      this.description = e.target.innerText;
+      this.descriptionEditable = e.target.innerText;
     },
+    onFocus(e) {
+      setTimeout(function(){
+        console.log(e);
+        e.target.focus();
+      }, 0);
+    }
   },
   computed: {
     titleValue() {
@@ -124,11 +146,11 @@ export default {
         return "";
       }
 
-      if (!this.title) {
+      if (!this.titleEditable) {
         return "Input your title here";
       }
 
-      return this.title;
+      return this.titleEditable;
     },
   },
 };

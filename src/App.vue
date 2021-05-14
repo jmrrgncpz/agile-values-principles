@@ -7,7 +7,7 @@
             <v-col class="title-container">
               <h1 id="values-title" class="section-title ma-0">Values</h1>
             </v-col>
-            <v-col class="d-flex flex-column cards-container">
+            <v-col id="values-container" class="d-flex flex-column cards-container">
               <v-btn
                 :disabled="isCreatingValue"
                 v-if="values.length < 4"
@@ -31,11 +31,13 @@
 
               <Card
                 v-if="isCreatingValue"
+                id="new-value-card"
                 theme="dark"
                 :number="values.length + 1"
                 :isNew="true"
                 v-on:new-card-saved="handleNewCardSave"
                 data-test-id="new-value-container"
+                @new-card-canceled="isCreatingValue = false"
               >
               </Card>
             </v-col>
@@ -49,7 +51,7 @@
                 Principles
               </h1>
             </v-col>
-            <v-col class="d-flex flex-column cards-container">
+            <v-col id="principles-container" class="d-flex flex-column cards-container">
               <v-btn
                 :disabled="isCreatingPrinciple"
                 v-if="principles.length < 12"
@@ -73,12 +75,14 @@
 
               <Card
                 v-if="isCreatingPrinciple"
+                id="new-principle-card"
                 theme="light"
                 :number="principles.length + 1"
                 :isNew="true"
                 :is-principle="true"
                 v-on:new-card-saved="handleNewCardSave"
                 data-test-id="new-value-container"
+                @new-card-canceled="isCreatingPrinciple = false"
               >
                 {{ 'Input Principle description'}}
               </Card>
@@ -109,9 +113,11 @@ export default {
   methods: {
     createNewValue() {
       this.isCreatingValue = true;
+      this.scrollToBottom('values-container');
     },
     createNewPrinciple() {
       this.isCreatingPrinciple = true;
+      this.scrollToBottom('principles-container');
     },
     handleNewCardSave() {
       if (this.isCreatingValue) {
@@ -121,6 +127,12 @@ export default {
       if (this.isCreatingPrinciple) {
         this.isCreatingPrinciple = false;
       }
+    },
+    scrollToBottom(elementId) {
+      this.$nextTick(() => {
+        var container = document.querySelector(`#${elementId}`)
+        container.scrollTop = container.scrollHeight;
+      })
     }
   },
   computed: {
@@ -180,5 +192,9 @@ export default {
 
 .fill-height {
   height: 100%;
+}
+
+.cards-container {
+  scroll-behavior: smooth;
 }
 </style>

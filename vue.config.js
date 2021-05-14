@@ -2,5 +2,5 @@ module.exports = {
   transpileDependencies: [
     'vuetify'
   ],
-  publicPath: 'https://jmrrgncpz.github.io/agile-values-principles/'
+  publicPath: process.env.NODE_ENV === 'production' ? 'https://jmrrgncpz.github.io/agile-values-principles/' : '/'
 }
