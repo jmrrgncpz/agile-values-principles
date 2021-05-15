@@ -16,7 +16,6 @@
           v-if="!isPrinciple"
           class="title text-lg-h4 text-xl-h3 font-weight-black text-right"
           :contenteditable="isEditing"
-          @focus="onFocus"
           @blur="onTitleInput"
           data-test-id="card-title"
           ref="card-title"
@@ -132,12 +131,6 @@ export default {
     },
     onDescriptionInput(e) {
       this.descriptionProxy = e.target.innerText;
-    },
-    onFocus(e) {
-      setTimeout(function(){
-        console.log(e);
-        e.target.focus();
-      }, 0);
     }
   },
   computed: {
