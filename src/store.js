@@ -13,10 +13,10 @@ const store = new Vuex.Store({
     mutations: vuexfireMutations,
     actions: {
       bindValues: firestoreAction(({ bindFirestoreRef }) => {
-        return bindFirestoreRef('values', db.collection('values'));
+        return bindFirestoreRef('values', db.collection('values').orderBy("dateCreated"));
       }),
       bindPrinciples: firestoreAction(({ bindFirestoreRef }) => {
-        return bindFirestoreRef('principles', db.collection('principles'));
+        return bindFirestoreRef('principles', db.collection('principles').orderBy("dateCreated"));
       }),
       create: firestoreAction((context, { collectionId, document }) => {
         return db.collection(collectionId).add({ ...document })

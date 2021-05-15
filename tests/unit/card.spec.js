@@ -64,6 +64,8 @@ describe("Card.vue", () => {
   });
 
   it("when new card is being saved, dispatches create", async () => {
+    // mock date
+    Date.now = jest.fn(() => 1621071775);
     await wrapper.setData({
       titleProxy: "New value",
       descriptionProxy: "",
@@ -77,7 +79,7 @@ describe("Card.vue", () => {
     expect(store.dispatch).toHaveBeenCalled();
     expect(store.dispatch).toHaveBeenCalledWith("create", {
       collectionId: "values",
-      document: { title: "New value", description: "" },
+      document: { title: "New value", description: "", dateCreated: 1621071775 },
     });
   });
 

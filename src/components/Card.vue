@@ -103,16 +103,18 @@ export default {
       };
 
       if (this.isNew) {
+        document.dateCreated = Date.now();
         this.$store.dispatch("create", { collectionId, document });
       } else {
         document.id = this.id;
         this.$store.dispatch("update", { collectionId, document });
-        this.originalTitle = document.title;
-        this.originalDescription = document.description;
+        
       }
 
       this.isSaving = false;
       this.isEditing = false;
+      this.originalTitle = document.title;
+      this.originalDescription = document.description;
       this.$emit(eventName);
     },
     deleteCard() {
