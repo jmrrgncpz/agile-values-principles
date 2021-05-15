@@ -26,7 +26,6 @@
                 theme="dark"
                 ref="value-card"
               >
-                {{ value.description }}
               </Card>
 
               <Card
@@ -66,11 +65,10 @@
                 :id="principle.id"
                 :key="principle.id"
                 :number="i + 1"
-                :title="principle.title"
+                :description="principle.description"
                 :is-principle="true"
                 theme="light"
               >
-                {{ principle.description }}
               </Card>
 
               <Card
@@ -80,11 +78,11 @@
                 :number="principles.length + 1"
                 :isNew="true"
                 :is-principle="true"
+                :description="principle.description || 'Input Principle description'"
                 v-on:new-card-saved="handleNewCardSave"
                 data-test-id="new-value-container"
                 @new-card-canceled="isCreatingPrinciple = false"
               >
-                {{ 'Input Principle description'}}
               </Card>
             </v-col>
           </v-row>
