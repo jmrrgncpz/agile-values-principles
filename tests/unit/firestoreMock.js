@@ -1,5 +1,3 @@
-var firebasemock    = require('firebase-mock');
-
 import { Store } from "vuex-mock-store";
 
 export const store = new Store({

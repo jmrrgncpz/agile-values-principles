@@ -23,13 +23,13 @@ describe("Card.vue", () => {
   });
 
   it("renders [title, number] props when passed", async () => {
-    const title = "Value 1";
+    const titleProxy = "Value 1";
     const number = "4";
 
-    await wrapper.setProps({ title, number });
+    await wrapper.setData({ titleProxy, number });
 
-    const titleEL = wrapper.find("[data-test-id=card-title]");
-    const numberEl = wrapper.find("[data-test-id=card-number]");
+    const titleEL = await wrapper.find("[data-test-id=card-title]");
+    const numberEl = await wrapper.find("[data-test-id=card-number]");
 
     expect(titleEL.text()).toBe("Value 1");
     expect(numberEl.text()).toBe("4");
@@ -65,8 +65,8 @@ describe("Card.vue", () => {
 
   it("when new card is being saved, dispatches create", async () => {
     await wrapper.setData({
-      title: "New value",
-      description: "",
+      titleProxy: "New value",
+      descriptionProxy: "",
       isNew: true,
       isEditing: true,
     });
@@ -83,8 +83,8 @@ describe("Card.vue", () => {
 
   it("when new card is being saved, dispatches update", async () => {
     await wrapper.setData({
-      title: "Existing value",
-      description: "",
+      titleProxy: "Existing value",
+      descriptionProxy: "",
       isNew: false,
       isEditing: true,
       id: 'doc-1'

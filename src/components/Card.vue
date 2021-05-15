@@ -78,9 +78,9 @@ export default {
     }
 
     this.originalTitle = this.title;
-    this.titleEditable = this.title;
+    this.titleProxy = this.title;
     this.originalDescription = this.description;
-    this.descriptionEditable = this.description;
+    this.descriptionProxy = this.description;
   },
   data() {
     return {
@@ -88,8 +88,8 @@ export default {
       isSaving: false,
       originalTitle: "",
       originalDescription: "",
-      titleEditable: "",
-      descriptionEditable: "",
+      titleProxy: "",
+      descriptionProxy: "",
     };
   },
   methods: {
@@ -99,8 +99,8 @@ export default {
       let eventName = this.isNew ? "new-card-saved" : "card-saved";
       const collectionId = this.isPrinciple ? "principles" : "values";
       const document = {
-        title: this.titleEditable || "",
-        description: this.descriptionEditable || "",
+        title: this.titleProxy || "",
+        description: this.descriptionProxy || "",
       };
 
       if (this.isNew) {
@@ -122,16 +122,16 @@ export default {
       if (this.isNew) {
         this.$emit('new-card-canceled');
       } else {
-        this.titleEditable = this.originalTitle;
-        this.descriptionEditable = this.originalDescription;
+        this.titleProxy = this.originalTitle;
+        this.descriptionProxy = this.originalDescription;
         this.isEditing = false;  
       }
     },
     onTitleInput(e) {
-      this.titleEditable = e.target.innerText;
+      this.titleProxy = e.target.innerText;
     },
     onDescriptionInput(e) {
-      this.descriptionEditable = e.target.innerText;
+      this.descriptionProxy = e.target.innerText;
     },
     onFocus(e) {
       setTimeout(function(){
@@ -146,11 +146,11 @@ export default {
         return "";
       }
 
-      if (!this.titleEditable) {
+      if (!this.titleProxy) {
         return "Input your title here";
       }
 
-      return this.titleEditable;
+      return this.titleProxy;
     },
   },
 };
