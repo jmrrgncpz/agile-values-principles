@@ -115,6 +115,5 @@ describe("Card.vue", () => {
       collectionId: 'values',
       documentId: 'doc-1'
     })
-    expect(store.state.values.length).toBe(2);
   })
 });
