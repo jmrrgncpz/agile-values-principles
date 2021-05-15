@@ -25,10 +25,10 @@
         <v-card-text
           v-if="isPrinciple"
           class="content"
-          @input="onDescriptionInput"
+          @blur="onDescriptionInput"
           :contenteditable="isEditing"
         >
-          <slot></slot>
+          {{ descriptionValue }}
         </v-card-text>
         <v-card-actions
           class="d-flex"
@@ -70,7 +70,7 @@
 
 <script>
 export default {
-  props: ["id", "number", "title", "theme", "isPrinciple", "isNew"],
+  props: ["id", "number", "title", "theme", "isPrinciple", "isNew", "description"],
   mounted() {
     if (this.isNew) {
       this.isEditing = true;
@@ -107,6 +107,8 @@ export default {
       } else {
         document.id = this.id;
         this.$store.dispatch("update", { collectionId, document });
+        this.originalTitle = document.title;
+        this.originalDescription = document.description;
       }
 
       this.isSaving = false;
@@ -145,6 +147,17 @@ export default {
 
       return this.titleProxy;
     },
+    descriptionValue() {
+      if (!this.isPrinciple) {
+        return "";
+      }
+
+      if (!this.descriptionProxy) {
+        return 'Input Principle description'
+      }
+
+      return this.descriptionProxy;
+    }
   },
 };
 </script>

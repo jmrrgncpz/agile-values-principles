@@ -78,7 +78,6 @@
                 :number="principles.length + 1"
                 :isNew="true"
                 :is-principle="true"
-                :description="principle.description || 'Input Principle description'"
                 v-on:new-card-saved="handleNewCardSave"
                 data-test-id="new-value-container"
                 @new-card-canceled="isCreatingPrinciple = false"
